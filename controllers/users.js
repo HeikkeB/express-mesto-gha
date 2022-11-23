@@ -1,11 +1,11 @@
-const Users = require('../models/User')
+const User = require('../models/User')
 
 module.exports.createUser = (req, res) => {
-  try {
-    const {name, about, avatar} = req.body
-  res.json({name, about, avatar})
-  } catch (error) {
-    console.log(error)
-  }
+  const {name, about, avatar} = req.body
+  User.create({name, about, avatar})
+  .then((user) => res.send(user))
+  .catch((err) => {
+    console.log(err)
+  })
 
 }
