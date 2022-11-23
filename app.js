@@ -1,9 +1,22 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const {PORT = 3000} = process.env
+const dotenv = require('dotenv')
+
+const PORT = process.env.PORT || 3000
 
 const app = express()
+dotenv.config()
 
-app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`)
-})
+async function start() {
+  try {
+    await mongoose.connect(/*`mongodb+srv://admin:12345@mestodb.grolxo6.mongodb.net/?retryWrites=true&w=majority`*/'mongodb://localhost:27017/mestodb')
+
+    app.listen(PORT, () => {
+      console.log(`App listening on port ${PORT}`)
+  })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+start()
