@@ -1,36 +1,62 @@
-const Card = require('../models/Card')
+const Card = require('../models/Card');
 
-module.exports.createCard = (req, res) => {
+const { CREATED, OK } =require('../errors/errors')
+const BadRequest = require('../errors/badRequest');
+const NotFound = require('../errors/notFound');
+const ServerError = require('../errors/serverError');
+
+module.exports.createCard = (req, res, next) => {
 const {name, link} = req.body
 Card.create({name, link, owner: req.user._id})
-.then((card) => res.send({data: card}))
+.then((card) => res.status(CREATED).send({data: card}))
 .catch((err) => {
-  console.log(err)
+  if(err.name === 'CastError') {
+    next(new BadRequest('Incorrect data entered'));
+    return;
+ } else {
+    next(new ServerError('An internal error has occurred'));
+    return;
+ }
 })
 }
 
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
-  .then((cards) => res.send(cards))
+  .then((cards) => res.status(OK).send(cards))
   .catch((err) => {
-    console.log(err)
+    if(err.name === 'CastError') {
+      next(new BadRequest('Incorrect data entered'));
+      return;
+      } else {
+      next(new ServerError('An internal error has occurred'));
+      return;
+      }
   })
 }
 
-module.exports.removeCard = (req, res) => {
+module.exports.removeCard = (req, res, next) => {
   Card.findByIdAndDelete({_id: req.params.cardId})
-  .then(() => res.send({message: 'Card deleted'}))
+  .then(() => res.status(OK).send({message: 'Card deleted'}))
   .catch((err) => {
-    console.log(err)
+    if(err.name === 'CastError') {
+      next(new BadRequest('Incorrect data entered'));
+      return;
+      } else if(err.name === 'NotFound') {
+      next(new NotFound(`User isn't found`));
+      return;
+      } else {
+      next(new ServerError('An internal error has occurred'));
+      return;
+      }
   })
 }
 
-module.exports.addLike = (req, res) => {
+module.exports.addLike = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
     )
-    .then((card) => res.send({data: card}))
+    .then((card) => res.status(OK).send({data: card}))
     .catch((err) => {
       console.log(err)
     })
