@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const routerUsers = require('./routes/users')
+const routerCards = require('./routes/cards')
 
 const PORT = process.env.PORT || 3000
 
@@ -10,7 +11,15 @@ dotenv.config()
 
 app.use(express.json())
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '637e73ef6ced3ba1c94bef65'
+  }
+  next()
+});
+
 app.use('/users', routerUsers)
+app.use('/cards', routerCards)
 
 async function start() {
   try {

@@ -7,5 +7,20 @@ module.exports.createUser = (req, res) => {
   .catch((err) => {
     console.log(err)
   })
+}
 
+module.exports.getUser = (req, res) => {
+  User.findById(req.params.userId)
+  .then((user) => res.send(user))
+  .catch((err) => {
+    console.log(err)
+  })
+}
+
+module.exports.getAllUsers = (req, res) => {
+User.find({})
+.then((users) => res.send(users))
+.catch((err) => {
+  console.log(err)
+})
 }
