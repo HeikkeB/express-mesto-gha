@@ -1,21 +1,21 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const dotenv = require('dotenv')
-const routerUsers = require('./routes/users')
-const routerCards = require('./routes/cards')
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const routerUsers = require('./routes/users');
+const routerCards = require('./routes/cards');
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
-const app = express()
-dotenv.config()
+const app = express();
+dotenv.config();
 
-app.use(express.json())
+app.use(express.json());
 
 app.use((req, res, next) => {
   req.user = {
     _id: '637f712f21ee222104b6363d'
   }
-  next()
+  next();
 });
 
 app.use('/users', routerUsers)
@@ -26,22 +26,11 @@ async function start() {
     await mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
     app.listen(PORT, () => {
-      console.log(`App listening on port ${PORT}`)
+      console.log(`App listening on port ${PORT}`);
   })
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
-start()
-
-
-// {
-//   "_id": {
-//     "$oid": "637e73ef6ced3ba1c94bef65"
-//   },
-//   "name": "qqq",
-//   "about": "ttt",
-//   "avatar": "fff.com",
-//   "__v": 0
-// }
+start();
