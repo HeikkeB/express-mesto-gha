@@ -24,3 +24,22 @@ User.find({})
   console.log(err)
 })
 }
+
+module.exports.updateUser = (req, res) => {
+  const {name, about} =req.body
+  User.findByIdAndUpdate(req.user._id, {name, about})
+  .then((user) => res.send(user))
+  .catch((err) => {
+    console.log(err)
+  }
+  )
+}
+
+module.exports.updateAvatar = (req, res) => {
+  const {avatar} = req.body
+  User.findByIdAndUpdate(req.user._id, {avatar})
+  .then((user) => res.send(user))
+  .catch((err) => {
+console.log(err)
+  })
+}
