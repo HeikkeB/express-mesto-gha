@@ -1,6 +1,13 @@
 const Card = require('../models/card');
 const {
-  STATUS_CREATED, NOT_FOUND, BAD_REQUEST, SERVER_ERROR,
+  STATUS_CREATED,
+  NOT_FOUND,
+  BAD_REQUEST,
+  SERVER_ERROR,
+  badRequestMessage,
+  serverErrorMessage,
+  notFoundMessage,
+  deleteItem,
 } = require('../utils/constants');
 
 module.exports.createCard = (req, res) => {
@@ -9,9 +16,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(STATUS_CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -21,9 +28,9 @@ module.exports.getAllCards = (req, res) => {
     .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -31,14 +38,14 @@ module.exports.getAllCards = (req, res) => {
 module.exports.removeCard = (req, res) => {
   Card.findByIdAndDelete({ _id: req.params.cardId })
     .then((card) => {
-      if (card) res.send({ message: 'Card deleted' });
-      else res.status(NOT_FOUND).send({ message: 'Card is not found' });
+      if (card) res.send({ message: deleteItem });
+      else res.status(NOT_FOUND).send({ message: notFoundMessage });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -51,13 +58,13 @@ module.exports.addLike = (req, res) => {
   )
     .then((card) => {
       if (card) res.send({ data: card });
-      else res.status(NOT_FOUND).send({ message: 'Like is not found' });
+      else res.status(NOT_FOUND).send({ message: notFoundMessage });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -74,9 +81,9 @@ module.exports.removeLike = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };

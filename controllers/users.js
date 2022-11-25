@@ -1,6 +1,12 @@
 const User = require('../models/user');
 const {
-  STATUS_CREATED, NOT_FOUND, BAD_REQUEST, SERVER_ERROR,
+  STATUS_CREATED,
+  NOT_FOUND,
+  BAD_REQUEST,
+  SERVER_ERROR,
+  badRequestMessage,
+  serverErrorMessage,
+  notFoundMessage,
 } = require('../utils/constants');
 
 module.exports.createUser = (req, res) => {
@@ -9,9 +15,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -20,13 +26,13 @@ module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(NOT_FOUND).send({ message: 'User is not found' });
+      else res.status(NOT_FOUND).send({ message: notFoundMessage });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -36,9 +42,9 @@ module.exports.getAllUsers = (req, res) => {
     .then((users) => res.send(users))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -52,13 +58,13 @@ module.exports.updateUser = (req, res) => {
   )
     .then((user) => {
       if (user) res.send({ name, about });
-      else res.status(NOT_FOUND).send({ message: 'User is not found' });
+      else res.status(NOT_FOUND).send({ message: notFoundMessage });
     })
     .catch((err) => {
       if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
@@ -72,13 +78,13 @@ module.exports.updateAvatar = (req, res) => {
   )
     .then((user) => {
       if (user) res.send({ avatar });
-      else res.status(NOT_FOUND).send({ message: 'User is not found' });
+      else res.status(NOT_FOUND).send({ message: notFoundMessage });
     })
     .catch((err) => {
       if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
-        res.status(BAD_REQUEST).send({ message: 'Incorrect data entered' });
+        res.status(BAD_REQUEST).send({ message: badRequestMessage });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal error has occurred' });
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
       }
     });
 };
