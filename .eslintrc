@@ -1,6 +1,17 @@
 {
-  "extends": "airbnb-base",
+  "extends": [
+    "airbnb-base",
+    "plugin:import/recommended"
+  ],
+
+  "settings":{
+    "babel-module": {
+      "extensions": [".js", ".jsx"],
+    }
+  },
+
   "rules": {
+    "import/extensions": "off",
     "no-underscore-dangle": [
       "error",
       {
@@ -12,4 +23,3 @@
     "linebreak-style": 0
   }
 }
-
