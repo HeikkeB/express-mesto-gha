@@ -3,5 +3,5 @@ const CREATED = 201;
 
 module.exports = {
   OK,
-  CREATED
+  CREATED,
 };

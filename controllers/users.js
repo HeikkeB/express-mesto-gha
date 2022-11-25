@@ -1,89 +1,75 @@
 const User = require('../models/User');
 
-const { CREATED, OK } =require('../errors/errors')
+const { CREATED, OK } = require('../errors/errors');
 const BadRequest = require('../errors/badRequest');
 const NotFound = require('../errors/notFound');
 const ServerError = require('../errors/serverError');
 
 module.exports.createUser = (req, res, next) => {
-  const {name, about, avatar} = req.body;
-  User.create({name, about, avatar})
-  .then((user) => res.status(CREATED).send(user))
-  .catch((err) => {
-    if(err.name === 'CastError') {
-       next(new BadRequest('Incorrect data entered'));
-       return;
-    } else {
-       next(new ServerError('Internal error has occurred'));
-       return;
-    }
-  })
-}
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.status(CREATED).send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+      } else {
+        next(new ServerError('Internal error has occurred'));
+      }
+    });
+};
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
-  .then((user) => res.status(OK).send(user))
-  .catch((err) => {
-if(err.name === 'CastError') {
-  next(new BadRequest('Incorrect data entered'));
-  return;
-  } else if(err.name === 'NotFound') {
-  next(new NotFound(`User isn't found`));
-  return;
-  } else {
-  next(new ServerError('Internal error has occurred'));
-  return;
-  }
- })
-}
+    .then((user) => res.status(OK).send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+      } else if (err.name === 'NotFound') {
+        next(new NotFound('User is not found'));
+      } else {
+        next(new ServerError('Internal error has occurred'));
+      }
+    });
+};
 
 module.exports.getAllUsers = (req, res, next) => {
-User.find({})
-.then((users) => res.status(OK).send(users))
-.catch((err) => {
-  if(err.name === 'CastError') {
-    next(new BadRequest('Incorrect data entered'));
-    return;
-    } else {
-    next(new ServerError('Internal error has occurred'));
-    return;
-    }
-})
-}
+  User.find({})
+    .then((users) => res.status(OK).send(users))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+      } else {
+        next(new ServerError('Internal error has occurred'));
+      }
+    });
+};
 
 module.exports.updateUser = (req, res, next) => {
-  const {name, about} =req.body
-  User.findByIdAndUpdate(req.user._id, {name, about})
-  .then((user) => res.status(OK).send(user))
-  .catch((err) => {
-    if(err.name === 'CastError') {
-      next(new BadRequest('Incorrect data entered'));
-      return;
-      } else if(err.name === 'NotFound') {
-      next(new NotFound(`User isn't found`));
-      return;
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, about })
+    .then((user) => res.status(OK).send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+      } else if (err.name === 'NotFound') {
+        next(new NotFound('User is not found'));
       } else {
-      next(new ServerError('Internal error has occurred'));
-      return;
+        next(new ServerError('Internal error has occurred'));
       }
-  }
-  )
-}
+    });
+};
 
 module.exports.updateAvatar = (req, res, next) => {
-  const {avatar} = req.body
-  User.findByIdAndUpdate(req.user._id, {avatar})
-  .then((user) => res.status(OK).send(user))
-  .catch((err) => {
-    if(err.name === 'CastError') {
-      next(new BadRequest('Incorrect data entered'));
-      return;
-      } else if(err.name === 'NotFound') {
-      next(new NotFound(`User isn't found`));
-      return;
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(req.user._id, { avatar })
+    .then((user) => res.status(OK).send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+      } else if (err.name === 'NotFound') {
+        next(new NotFound('User is not found'));
       } else {
-      next(new ServerError('Internal error has occurred'));
-      return;
+        next(new ServerError('Internal error has occurred'));
       }
-  })
-}
+    });
+};
