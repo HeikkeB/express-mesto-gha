@@ -1,13 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
+const { notFound } = require('./utils/constants');
 
-const PORT = process.env.PORT || 3000;
+const { PORT = 3000 } = process.env;
 
 const app = express();
-dotenv.config();
 
 app.use(express.json());
 
@@ -20,9 +19,7 @@ app.use((req, res, next) => {
 
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Not found' });
-});
+app.use('*', notFound);
 
 async function start() {
   try {

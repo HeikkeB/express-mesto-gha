@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -16,11 +16,11 @@ module.exports.createUser = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) res.status(200).send({ data: user });
+      if (user) res.send({ data: user });
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {
-      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Incorrect data entered' });
       } else {
         res.status(500).send({ message: 'Internal error has occurred' });
@@ -30,9 +30,9 @@ module.exports.getUser = (req, res) => {
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch((err) => {
-      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Incorrect data entered' });
       } else {
         res.status(500).send({ message: 'Internal error has occurred' });
@@ -48,7 +48,7 @@ module.exports.updateUser = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (user) res.status(200).send({ name, about });
+      if (user) res.send({ name, about });
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {
@@ -68,7 +68,7 @@ module.exports.updateAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (user) res.status(200).send({ avatar });
+      if (user) res.send({ avatar });
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {

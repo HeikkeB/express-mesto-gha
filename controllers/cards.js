@@ -1,4 +1,4 @@
-const Card = require('../models/Card');
+const Card = require('../models/card');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -15,9 +15,9 @@ module.exports.createCard = (req, res) => {
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.send(cards))
     .catch((err) => {
-      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Incorrect data entered' });
       } else {
         res.status(500).send({ message: 'Internal error has occurred' });
@@ -28,7 +28,7 @@ module.exports.getAllCards = (req, res) => {
 module.exports.removeCard = (req, res) => {
   Card.findByIdAndDelete({ _id: req.params.cardId })
     .then((card) => {
-      if (card) res.status(200).send({ message: 'Card deleted' });
+      if (card) res.send({ message: 'Card deleted' });
       else res.status(404).send({ message: 'Card is not found' });
     })
     .catch((err) => {
@@ -47,7 +47,7 @@ module.exports.addLike = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (card) res.status(200).send({ data: card });
+      if (card) res.send({ data: card });
       else res.status(404).send({ message: 'Like is not found' });
     })
     .catch((err) => {
@@ -66,7 +66,7 @@ module.exports.removeLike = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (card) res.status(200).send({ data: card });
+      if (card) res.send({ data: card });
       else res.status(404).send({ message: 'Like is not found' });
     })
     .catch((err) => {
