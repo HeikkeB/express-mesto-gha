@@ -27,9 +27,12 @@ module.exports.getAllCards = (req, res) => {
 
 module.exports.removeCard = (req, res) => {
   Card.findByIdAndDelete({ _id: req.params.cardId })
-    .then(() => res.status(200).send({ message: 'Card deleted' }))
+    .then((card) => {
+      if (card) res.status(200).send({ message: 'Card deleted' });
+      else res.status(404).send({ message: 'Card is not found' });
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Incorrect data entered' });
       }
       return res.status(500).send({ message: 'Internal error has occurred' });
@@ -42,13 +45,15 @@ module.exports.addLike = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => {
+      if (card) res.status(200).send({ data: card });
+      else res.status(404).send({ message: 'Like is not found' });
+    })
     .catch((err) => {
-      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
-        res.status(400).send({ message: 'Incorrect data entered' });
-      } else {
-        res.status(500).send({ message: 'Internal error has occurred' });
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Incorrect data entered' });
       }
+      return res.status(500).send({ message: 'Internal error has occurred' });
     });
 };
 
@@ -63,10 +68,9 @@ module.exports.removeLike = (req, res) => {
       else res.status(404).send({ message: 'Like is not found' });
     })
     .catch((err) => {
-      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
-        res.status(400).send({ message: 'Incorrect data entered' });
-      } else {
-        res.status(500).send({ message: 'Internal error has occurred' });
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Incorrect data entered' });
       }
+      return res.status(500).send({ message: 'Internal error has occurred' });
     });
 };
