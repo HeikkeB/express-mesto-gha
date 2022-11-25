@@ -48,10 +48,12 @@ module.exports.updateUser = (req, res) => {
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {
-      if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Incorrect data entered' });
-      } else {
+      } else if (err.name === 'CastError') {
         res.status(500).send({ message: 'Internal error has occurred' });
+      } else {
+        res.status(400).send({ message: 'Incorrect data entered' });
       }
     });
 };
