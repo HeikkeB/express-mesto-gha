@@ -53,6 +53,6 @@ jobs:
     - name: Installing wait-port
       run: npm install -g wait-port
     - name: Wait for server to start
-      run: wait-port -t 30000 localhost:5000
+      run: wait-port -t 30000 127.0.0.1:3000
     - name: Run test config
       run: make proj13-test-endpoints
