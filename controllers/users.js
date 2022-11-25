@@ -10,7 +10,7 @@ module.exports.createUser = (req, res, next) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         next(new BadRequest('Incorrect data entered'));
       } else {
         next(new ServerError('Internal error has occurred'));
