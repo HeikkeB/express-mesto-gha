@@ -40,7 +40,7 @@ module.exports.getAllUsers = (req, res) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => {
@@ -50,10 +50,8 @@ module.exports.updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Incorrect data entered' });
-      } else if (err.name === 'CastError') {
-        res.status(500).send({ message: 'Internal error has occurred' });
       } else {
-        res.status(400).send({ message: 'Incorrect data entered' });
+        next(err);
       }
     });
 };
@@ -66,7 +64,7 @@ module.exports.updateAvatar = (req, res) => {
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {
-      if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Incorrect data entered' });
       } else {
         res.status(500).send({ message: 'Internal error has occurred' });
