@@ -53,9 +53,10 @@ module.exports.updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Incorrect data entered' });
+        res.status(400).send({ message: 'Incorrect data entered' });
+      } else {
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
-      return res.status(500).send({ message: 'Internal error has occurred' });
     });
 };
 
@@ -73,7 +74,8 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Incorrect data entered' });
+      } else {
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
-      return res.status(500).send({ message: 'Internal error has occurred' });
     });
 };
