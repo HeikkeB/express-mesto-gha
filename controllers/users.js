@@ -40,7 +40,7 @@ module.exports.getAllUsers = (req, res) => {
     });
 };
 
-module.exports.updateUser = (req, res, next) => {
+module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => {
@@ -50,8 +50,9 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Incorrect data entered' });
-      } else {
-        next(err);
+      }
+      if (err.name === 'CastError') {
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
     });
 };
