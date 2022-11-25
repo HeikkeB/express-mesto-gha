@@ -1,14 +1,9 @@
 const User = require('../models/User');
 
-const { CREATED, OK } = require('../errors/errors');
-const BadRequest = require('../errors/badRequest');
-const NotFound = require('../errors/notFound');
-const ServerError = require('../errors/serverError');
-
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED).send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Incorrect data entered' });
@@ -18,58 +13,61 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res, next) => {
+module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (user) res.status(200).send({ data: user });
+      else res.status(404).send({ message: 'User is not found' });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Incorrect data entered'));
-      } else if (err.name === 'NotFound') {
-        next(new NotFound('User is not found'));
+      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+        res.status(400).send({ message: 'Incorrect data entered' });
       } else {
-        next(new ServerError('Internal error has occurred'));
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
     });
 };
 
-module.exports.getAllUsers = (req, res, next) => {
+module.exports.getAllUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(OK).send(users))
+    .then((users) => res.status(200).send(users))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Incorrect data entered'));
+      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+        res.status(400).send({ message: 'Incorrect data entered' });
       } else {
-        next(new ServerError('Internal error has occurred'));
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
     });
 };
 
-module.exports.updateUser = (req, res, next) => {
+module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (user) res.status(200).send({ data: user });
+      else res.status(404).send({ message: 'User is not found' });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Incorrect data entered'));
-      } else if (err.name === 'NotFound') {
-        next(new NotFound('User is not found'));
+      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+        res.status(400).send({ message: 'Incorrect data entered' });
       } else {
-        next(new ServerError('Internal error has occurred'));
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
     });
 };
 
-module.exports.updateAvatar = (req, res, next) => {
+module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (user) res.status(200).send({ data: user });
+      else res.status(404).send({ message: 'User is not found' });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Incorrect data entered'));
-      } else if (err.name === 'NotFound') {
-        next(new NotFound('User is not found'));
+      if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
+        res.status(400).send({ message: 'Incorrect data entered' });
       } else {
-        next(new ServerError('Internal error has occurred'));
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
     });
 };
