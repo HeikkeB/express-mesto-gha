@@ -14,7 +14,7 @@ module.exports.createUser = (req, res, next) => {
        next(new BadRequest('Incorrect data entered'));
        return;
     } else {
-       next(new ServerError('An internal error has occurred'));
+       next(new ServerError('Internal error has occurred'));
        return;
     }
   })
@@ -27,11 +27,11 @@ module.exports.getUser = (req, res, next) => {
 if(err.name === 'CastError') {
   next(new BadRequest('Incorrect data entered'));
   return;
-  } else if(err.name === 'CastError') {
+  } else if(err.name === 'NotFound') {
   next(new NotFound(`User isn't found`));
   return;
   } else {
-  next(new ServerError('An internal error has occurred'));
+  next(new ServerError('Internal error has occurred'));
   return;
   }
  })
@@ -45,7 +45,7 @@ User.find({})
     next(new BadRequest('Incorrect data entered'));
     return;
     } else {
-    next(new ServerError('An internal error has occurred'));
+    next(new ServerError('Internal error has occurred'));
     return;
     }
 })
@@ -63,7 +63,7 @@ module.exports.updateUser = (req, res, next) => {
       next(new NotFound(`User isn't found`));
       return;
       } else {
-      next(new ServerError('An internal error has occurred'));
+      next(new ServerError('Internal error has occurred'));
       return;
       }
   }
@@ -82,7 +82,7 @@ module.exports.updateAvatar = (req, res, next) => {
       next(new NotFound(`User isn't found`));
       return;
       } else {
-      next(new ServerError('An internal error has occurred'));
+      next(new ServerError('Internal error has occurred'));
       return;
       }
   })

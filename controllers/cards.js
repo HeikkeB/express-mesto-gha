@@ -1,24 +1,22 @@
 const Card = require('../models/Card');
 
-const { CREATED, OK } =require('../errors/errors')
+const { CREATED, OK } = require('../errors/errors');
 const BadRequest = require('../errors/badRequest');
 const NotFound = require('../errors/notFound');
 const ServerError = require('../errors/serverError');
 
 module.exports.createCard = (req, res, next) => {
-const {name, link} = req.body
-Card.create({name, link, owner: req.user._id})
-.then((card) => res.status(CREATED).send({data: card}))
-.catch((err) => {
-  if(err.name === 'CastError') {
-    next(new BadRequest('Incorrect data entered'));
-    return;
+const { name, link } = req.body;
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => res.status(CREATED).send({ data: card }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
  } else {
-    next(new ServerError('An internal error has occurred'));
-    return;
- }
-})
-}
+        next(new ServerError('Internal error has occurred'));
+      }
+    });
+};
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
@@ -27,8 +25,11 @@ module.exports.getAllCards = (req, res, next) => {
     if(err.name === 'CastError') {
       next(new BadRequest('Incorrect data entered'));
       return;
+      } else if(err.name === 'NotFound') {
+        next(new NotFound(`Card isn't found`));
+        return;
       } else {
-      next(new ServerError('An internal error has occurred'));
+      next(new ServerError('Internal error has occurred'));
       return;
       }
   })
@@ -42,10 +43,10 @@ module.exports.removeCard = (req, res, next) => {
       next(new BadRequest('Incorrect data entered'));
       return;
       } else if(err.name === 'NotFound') {
-      next(new NotFound(`User isn't found`));
+      next(new NotFound(`Card isn't found`));
       return;
       } else {
-      next(new ServerError('An internal error has occurred'));
+      next(new ServerError('Internal error has occurred'));
       return;
       }
   })
@@ -58,7 +59,13 @@ module.exports.addLike = (req, res, next) => {
     )
     .then((card) => res.status(OK).send({data: card}))
     .catch((err) => {
-      console.log(err)
+      if(err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+        return;
+     } else {
+        next(new ServerError('Internal error has occurred'));
+        return;
+     }
     })
 }
 
@@ -67,8 +74,17 @@ module.exports.removeLike = (req, res) => {
     { $pull: { likes: req.user._id } },
   { new: true },
     )
-    .then((card) => res.send({data: card}))
+    .then((card) => res.status(OK).send({data: card}))
     .catch((err) => {
-      console.log(err)
+      if(err.name === 'CastError') {
+        next(new BadRequest('Incorrect data entered'));
+        return;
+        } else if(err.name === 'NotFound') {
+        next(new NotFound(`Card isn't found`));
+        return;
+        } else {
+        next(new ServerError('Internal error has occurred'));
+        return;
+        }
     })
 }
