@@ -49,9 +49,9 @@ module.exports.updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Incorrect data entered' });
+        return res.status(400).send({ message: 'Incorrect data entered' });
       }
-      console.log(err);
+      return res.status(500).send({ message: 'Internal error has occurred' });
     });
 };
 
