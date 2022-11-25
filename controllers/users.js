@@ -48,7 +48,7 @@ module.exports.updateUser = (req, res) => {
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {
-      if ((err.name === 'ValidationError')) {
+      if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
         res.status(400).send({ message: 'Incorrect data entered' });
       } else {
         res.status(500).send({ message: 'Internal error has occurred' });
@@ -64,7 +64,7 @@ module.exports.updateAvatar = (req, res) => {
       else res.status(404).send({ message: 'User is not found' });
     })
     .catch((err) => {
-      if ((err.name === 'ValidationError')) {
+      if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
         res.status(400).send({ message: 'Incorrect data entered' });
       } else {
         res.status(500).send({ message: 'Internal error has occurred' });
