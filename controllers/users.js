@@ -5,15 +5,15 @@ const BadRequest = require('../errors/badRequest');
 const NotFound = require('../errors/notFound');
 const ServerError = require('../errors/serverError');
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequest('Incorrect data entered'));
+        res.status(400).send({ message: 'Incorrect data entered' });
       } else {
-        next(new ServerError('Internal error has occurred'));
+        res.status(500).send({ message: 'Internal error has occurred' });
       }
     });
 };
