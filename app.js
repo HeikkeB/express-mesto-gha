@@ -2,9 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
-const { notFound } = require('./utils/constants');
 
-const { PORT = 3000 || 3001 } = process.env;
+const { PORT = 3000 } = process.env;
+
+const notFound = (req, res) => {
+  res.status(404).send({ message: 'Not found' });
+};
 
 const app = express();
 

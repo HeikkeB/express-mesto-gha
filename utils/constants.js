@@ -2,23 +2,18 @@ const STATUS_CREATED = 201;
 const NOT_FOUND = 404;
 const BAD_REQUEST = 400;
 const SERVER_ERROR = 500;
-const badRequestMessage = 'Incorrect data entered';
-const serverErrorMessage = 'Internal error has occurred';
-const notFoundMessage = 'Not found';
-const deleteItem = 'Deleted';
-
-const notFound = (req, res) => {
-  res.status(404).send({ message: notFoundMessage });
-};
+const BAD_REQUEST_MESSAGE = 'Incorrect data entered';
+const SERVER_ERROR_MESSAGE = 'Internal error has occurred';
+const NOT_FOUND_MESSAGE = 'Not found';
+const DELETE_ITEM = 'Deleted';
 
 module.exports = {
-  notFound,
   STATUS_CREATED,
   NOT_FOUND,
   BAD_REQUEST,
   SERVER_ERROR,
-  badRequestMessage,
-  serverErrorMessage,
-  notFoundMessage,
-  deleteItem,
+  BAD_REQUEST_MESSAGE,
+  SERVER_ERROR_MESSAGE,
+  NOT_FOUND_MESSAGE,
+  DELETE_ITEM,
 };

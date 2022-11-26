@@ -1,13 +1,14 @@
 const Card = require('../models/card');
+
 const {
   STATUS_CREATED,
   NOT_FOUND,
   BAD_REQUEST,
   SERVER_ERROR,
-  badRequestMessage,
-  serverErrorMessage,
-  notFoundMessage,
-  deleteItem,
+  BAD_REQUEST_MESSAGE,
+  SERVER_ERROR_MESSAGE,
+  NOT_FOUND_MESSAGE,
+  DELETE_ITEM,
 } = require('../utils/constants');
 
 module.exports.createCard = (req, res) => {
@@ -16,36 +17,31 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(STATUS_CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: badRequestMessage });
+        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       } else {
-        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
+        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
       }
     });
 };
 
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: badRequestMessage });
-      } else {
-        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
-      }
-    });
+    .catch((err) => next(err));
 };
 
 module.exports.removeCard = (req, res) => {
   Card.findByIdAndDelete({ _id: req.params.cardId })
     .then((card) => {
-      if (card) res.send({ message: deleteItem });
-      else res.status(NOT_FOUND).send({ message: notFoundMessage });
+      if (card) res.send({ message: DELETE_ITEM });
+      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: badRequestMessage });
+        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       } else {
-        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
+        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
       }
     });
 };
@@ -56,15 +52,16 @@ module.exports.addLike = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (card) res.send({ data: card });
-      else res.status(NOT_FOUND).send({ message: notFoundMessage });
+      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: badRequestMessage });
+        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       } else {
-        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
+        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
       }
     });
 };
@@ -75,15 +72,16 @@ module.exports.removeLike = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (card) res.send({ data: card });
-      else res.status(NOT_FOUND).send({ message: 'Like is not found' });
+      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: badRequestMessage });
+        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       } else {
-        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
+        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
       }
     });
 };
