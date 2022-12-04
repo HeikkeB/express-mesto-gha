@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 const User = require('../models/user');
 const {
   STATUS_CREATED,

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 const Card = require('../models/card');
 
 const {
