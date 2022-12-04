@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const routerUsers = require('./routes/users');
-const routerCards = require('./routes/cards');
+// const routerUsers = require('./routes/users');
+// const routerCards = require('./routes/cards');
+const router = require('./routes/index');
 const { notFoundError } = require('./utils/notFoundError');
 
 const { PORT = 3000 } = process.env;
@@ -17,8 +18,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/users', routerUsers);
-app.use('/cards', routerCards);
+// app.use('/users', routerUsers);
+// app.use('/cards', routerCards);
+app.use(router);
 app.use('*', notFoundError);
 
 async function start() {
