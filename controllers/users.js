@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/no-unresolved */
 const User = require('../models/user');
 const {
@@ -11,7 +12,9 @@ const {
 } = require('../utils/constants');
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password: hash,
+  } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((err) => {
@@ -82,4 +85,8 @@ module.exports.updateAvatar = (req, res) => {
         res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
       }
     });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
 };
