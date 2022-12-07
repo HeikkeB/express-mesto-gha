@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ConflictError = require('../errors/ConflictError');
 const Unauthorized = require('../errors/Unauthorized');
+const NotFoundError = require('../errors/NotFoundError');
 
 const {
   STATUS_CREATED,
@@ -16,6 +17,7 @@ const {
   SERVER_ERROR_MESSAGE,
   NOT_FOUND_MESSAGE,
 } = require('../utils/constants');
+const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -119,5 +121,22 @@ module.exports.login = (req, res, next) => {
         return next(new Unauthorized('Wrong email or password!'));
       }
       next(err);
+    });
+};
+
+module.exports.getUserMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user._id) {
+        next(new NotFoundError('User not found'));
+      }
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Incorrect data entered'));
+      } else {
+        next(err);
+      }
     });
 };
