@@ -11,19 +11,10 @@ const app = express();
 
 app.use(express.json());
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '637f712f21ee222104b6363d',
-//   };
-//   next();
-// });
-
 app.post('/signup', createUser);
 app.post('/signin', login);
 
-app.use(auth);
-
-app.use(router);
+app.use(auth, router);
 app.use('*', notFoundError);
 
 async function start() {

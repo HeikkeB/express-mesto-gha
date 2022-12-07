@@ -1,4 +1,6 @@
 /* eslint-disable import/no-unresolved */
+const ForbiddenError = require('../errors/ForbiddenError');
+const NotFoundError = require('../errors/NotFoundError');
 const Card = require('../models/card');
 
 const {
@@ -33,10 +35,21 @@ module.exports.getAllCards = (req, res, next) => {
 };
 
 module.exports.removeCard = (req, res) => {
-  Card.findByIdAndDelete({ _id: req.params.cardId })
-    .then((card) => {
-      if (card) res.send({ message: DELETE_ITEM });
-      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+  const userId = req.user._id;
+
+  Card.findById({ _id: req.params.cardId })
+    .then((data) => {
+      if (!data) {
+        throw new NotFoundError('Card not found');
+      }
+      if (!data.owner.equals(userId)) {
+        throw new ForbiddenError('Cannot be removed');
+      }
+      Card.findByIdAndDelete({ _id: req.params.cardId })
+        .then((card) => {
+          if (card) res.send({ message: DELETE_ITEM });
+          else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+        });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
