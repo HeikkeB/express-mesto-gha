@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./routes/index');
 const { notFoundError } = require('./utils/notFoundError');
+const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 
@@ -15,6 +16,9 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 app.use(router);
 app.use('*', notFoundError);

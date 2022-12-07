@@ -1,6 +1,12 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/no-unresolved */
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const ConflictError = require('../errors/ConflictError');
+const Unauthorized = require('../errors/Unauthorized');
+
 const {
   STATUS_CREATED,
   NOT_FOUND,
@@ -11,12 +17,23 @@ const {
   NOT_FOUND_MESSAGE,
 } = require('../utils/constants');
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password: hash,
+    name, about, avatar, email, password,
   } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.status(STATUS_CREATED).send(user))
+
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        return next(new ConflictError(`There is already a ${email} with the same name`));
+      }
+      return bcrypt.hash(password, 10);
+    })
+
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => res.status(STATUS_CREATED).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
@@ -87,6 +104,20 @@ module.exports.updateAvatar = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'fc940a6da342577ec7ecc725c90a5037', {
+        expiresIn: '7d',
+      });
+      res.cookie('jwt', token, { expires: new Date(Date.now() + 12 * 3600000), httpOnly: true, sameSite: true });
+      res.send({ message: 'Authorization was successful!', token });
+    })
+    .catch((err) => {
+      if (err.message === 'IncorrectEmail') {
+        return next(new Unauthorized('Wrong email or password!'));
+      }
+      next(err);
+    });
 };
