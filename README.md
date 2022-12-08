@@ -14,3 +14,6 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+
+/https?:\/\/(\w{1,3})?\.?\w.{1,256}#?/gmi

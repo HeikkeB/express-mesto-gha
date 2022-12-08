@@ -4,6 +4,7 @@ const router = require('./routes/index');
 const { notFoundError } = require('./utils/notFoundError');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const handleErrors = require('./middlewares/handleErrors');
 
 const { PORT = 3000 } = process.env;
 
@@ -25,7 +26,7 @@ async function start() {
       console.log(`App listening on port ${PORT}`);
     });
   } catch (error) {
-    console.log(error);
+    app.use(handleErrors);
   }
 }
 

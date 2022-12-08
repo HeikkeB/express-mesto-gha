@@ -23,24 +23,18 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        return next(new ConflictError(`There is already a ${email} with the same name`));
-      }
-      return bcrypt.hash(password, 10);
-    })
-
+  bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
     .then((user) => res.status(STATUS_CREATED).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        next(new BadRequestError('Incorrect data entered'));
+      } else if (err.code === 11000) {
+        next(new ConflictError('This email is already in use'));
       } else {
-        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
+        next(err);
       }
     });
 };
