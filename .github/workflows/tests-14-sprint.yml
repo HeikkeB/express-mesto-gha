@@ -46,7 +46,7 @@ jobs:
     - name: Installing Dependencies
       run: npm i
     - name: Run server
-      run: npm start
+      run: npm run start &
     - name: Installing wait-port
       run: npm install -g wait-port
     - name: Wait for server to start
