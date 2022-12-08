@@ -23,7 +23,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Incorrect data entered'));
       } else if (err.code === 11000) {
-        next(new ConflictError('This email is already in use'));
+        next(new ConflictError(`${email} is already in use`));
       } else {
         next(err);
       }
@@ -34,7 +34,7 @@ module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => new NotFoundError('User is not found'))
     .then((user) => {
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -111,17 +111,14 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => {
-      if (!user._id) {
-        next(new NotFoundError('User not found'));
-      }
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Incorrect data entered'));
-      } else {
-        next(err);
-      }
-    });
+    .orFail(() => new NotFoundError('User not found'))
+    .then((user) => res.send(user))
+    .catch(next);
+  // .catch((err) => {
+  //   if (err.name === 'CastError') {
+  //     next(new BadRequestError('Incorrect data entered!'));
+  //   } else {
+  //     next(err);
+  //   }
+  // });
 };
