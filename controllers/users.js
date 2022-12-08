@@ -7,17 +7,8 @@ const User = require('../models/user');
 const ConflictError = require('../errors/ConflictError');
 const Unauthorized = require('../errors/Unauthorized');
 const NotFoundError = require('../errors/NotFoundError');
-
-const {
-  STATUS_CREATED,
-  NOT_FOUND,
-  BAD_REQUEST,
-  SERVER_ERROR,
-  BAD_REQUEST_MESSAGE,
-  SERVER_ERROR_MESSAGE,
-  NOT_FOUND_MESSAGE,
-} = require('../utils/constants');
 const BadRequestError = require('../errors/BadRequestError');
+const { STATUS_CREATED } = require('../utils/constants');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -39,17 +30,17 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
+    .orFail(() => new NotFoundError('User is not found'))
     .then((user) => {
-      if (user) res.send({ data: user });
-      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        next(new BadRequestError('Incorrect data entered'));
       } else {
-        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
+        next(err);
       }
     });
 };
@@ -57,45 +48,45 @@ module.exports.getUser = (req, res) => {
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => {
-      if (user) res.send({ name, about });
-      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+    .orFail(() => new NotFoundError('Not found'))
+    .then(() => {
+      res.send({ name, about });
     })
     .catch((err) => {
       if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
-        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        next(new BadRequestError('Incorrect data entered'));
       } else {
-        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
+        next(err);
       }
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => {
-      if (user) res.send({ avatar });
-      else res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+    .orFail(() => new NotFoundError('Not found'))
+    .then(() => {
+      res.send({ avatar });
     })
     .catch((err) => {
       if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
-        res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        next(new BadRequestError('Incorrect data entered'));
       } else {
-        res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
+        next(err);
       }
     });
 };

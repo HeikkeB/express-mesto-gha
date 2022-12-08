@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
@@ -22,6 +21,9 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
+      validate: {
+        validator: (v) => /https?:\/\/(\w{3})?\.?\w.{1,256}#?/g.test(v),
+      },
       required: false,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     },
