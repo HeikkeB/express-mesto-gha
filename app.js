@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { errors, Joi, celebrate } = require('celebrate');
+const { errors } = require('celebrate');
+const helmet = require('helmet');
+const routerAuth = require('./routes/auth');
 const router = require('./routes/index');
 const { notFoundError } = require('./utils/notFoundError');
-const { login, createUser } = require('./controllers/users');
+const { limiter } = require('./middlewares/limiter');
 const auth = require('./middlewares/auth');
 const { handleErrors } = require('./middlewares/handleErrors');
 
@@ -13,22 +15,9 @@ const app = express();
 
 app.use(express.json());
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
-    email: Joi.string().required().email().pattern(/^\S+@\S+\.\S+$/),
-    password: Joi.string().required().min(4),
-  }),
-}), createUser);
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email({ tlds: { allow: false } }),
-    password: Joi.string().required(),
-  }),
-}), login);
-
+app.use(helmet());
+app.use(limiter);
+app.use(routerAuth);
 app.use(auth, router);
 app.use('*', notFoundError);
 app.use(errors());

@@ -15,6 +15,8 @@
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",
     "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^6.0.1",
     "joi": "^12.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.3",
