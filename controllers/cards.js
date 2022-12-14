@@ -2,7 +2,7 @@
 const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
-const Card = require('../models/card');
+const Card = require('../models/Card');
 
 const {
   STATUS_CREATED,
