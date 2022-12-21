@@ -1,5 +1,7 @@
 const allowedCors = [
   'localhost:3000',
+  'myMesto.nomoredomains.club',
+  'api.mymesto.nomoredomains.club',
 ];
 
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,POST,PATCH,DELETE';
